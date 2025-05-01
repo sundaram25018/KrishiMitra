@@ -1,0 +1,45 @@
+body {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+.card {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  color: #ddd;
+}
+
+.card-title {
+  color: #66bb6a;
+}
+
+.btn-primary {
+  background-color: #66bb6a;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #57a05a;
+}
+
+.list-group-item {
+  background-color: #1e1e1e;
+  color: #ddd;
+  border-color: #333;
+}
+
+a {
+  color: #81d4fa;
+}
+
+a:hover {
+  color: #4fc3f7;
+}
+
+h3 {
+  color: #66bb6a;
+}
+
+hr {
+  border-top: 1px solid #333;
+}

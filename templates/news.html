@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farming News & Schemes | FarmAssist</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/news.css') }}">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">FarmAssist</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">🏠 Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/weather">🌦️ Weather</a></li>
+          <li class="nav-item"><a class="nav-link" href="/chat">💬 Chatbot</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/news">📰 News</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="container py-4">
+    <h3 class="mb-4 text-center">📰 Latest Agriculture News & Schemes</h3>
+
+    <div class="row">
+      {% for article in articles %}
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ article.title }}</h5>
+            <p class="card-text">{{ article.description }}</p>
+            <a href="{{ article.url }}" target="_blank" class="btn btn-primary btn-sm">Read More</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <hr class="mt-5">
+
+    <!-- Government Schemes -->
+    <div class="mt-5">
+      <h3>📢 Government Schemes for Farmers (India)</h3>
+      <ul class="list-group mt-3">
+
+        <li class="list-group-item">
+          <h5><a href="https://pmkisan.gov.in" target="_blank">PM-KISAN Samman Nidhi Yojana</a></h5>
+          <p>Provides ₹6000 per year financial support to eligible farmers in three installments directly to their bank account.</p>
+        </li>
+
+        <li class="list-group-item">
+          <h5><a href="https://agricoop.gov.in/en/schemes" target="_blank">Ministry of Agriculture – Scheme List</a></h5>
+          <p>Comprehensive list of central government schemes for crop insurance, irrigation, soil health, farmer welfare and more.</p>
+        </li>
+
+        <li class="list-group-item">
+          <h5><a href="https://www.india.gov.in/my-government/schemes" target="_blank">Government of India – All Schemes Portal</a></h5>
+          <p>Explore all government welfare schemes across departments. Filter by agriculture, education, employment, etc.</p>
+        </li>
+
+        <li class="list-group-item">
+          <h5><a href="https://agriinfra.dac.gov.in" target="_blank">Agriculture Infrastructure Fund (AIF)</a></h5>
+          <p>Offers medium-long term loans with interest subsidy to FPOs, agri startups, and co-ops for warehouses, cold storage, etc.</p>
+        </li>
+
+        <li class="list-group-item">
+          <h5><a href="https://www.enam.gov.in" target="_blank">eNAM (National Agriculture Market)</a></h5>
+          <p>Online trading platform to connect existing APMC mandis to create a unified national market for agricultural commodities.</p>
+        </li>
+
+        <li class="list-group-item">
+          <h5><a href="https://kvk.icar.gov.in" target="_blank">Krishi Vigyan Kendra (KVK)</a></h5>
+          <p>Find district-level agri experts, on-field trainings, and demonstration units for modern farming practices.</p>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

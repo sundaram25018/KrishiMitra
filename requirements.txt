@@ -1,0 +1,8 @@
+pandas,
+numpy,
+scikit-learn,
+pickle,
+requests,
+beautifulsoup4,
+flask,
+generativeai,
