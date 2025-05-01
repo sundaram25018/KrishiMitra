@@ -19,7 +19,10 @@ Shows latest agricultural news from trusted sources like NDTV and DownToEarth.
 Displays up-to-date government schemes using verified official links (PM-KISAN, AIF, eNAM etc.)
 
 ✅ **🌱 Crop Recommendation **  
- ML-based crop prediction based on soil, climate and rainfall data.
+ ML-based crop prediction based on soil, climate and rainfall data and .
+
+ ✅ **🌱 Disease Prediction **  
+ ML-based Disease prediction by uploading an image and suggest a discription and solutions .
 
 ---
 
@@ -47,7 +50,18 @@ Displays up-to-date government schemes using verified official links (PM-KISAN, 
 ├── Notebook/                  
 │   ├── crop.ipynb            
 │   ├── crop-recomendation.csv            
-│    
+│   
+
+├── static/                  
+│   ├── style/
+│        ├──index.css
+│        ├──chat.css
+│        ├──news.css
+│        ├──diagnous.css
+│        ├──weather.css
+│
+│   ├── Upload/           
+│       
 
 ├── templates/                  
 │   ├── index.html              
@@ -59,10 +73,20 @@ Displays up-to-date government schemes using verified official links (PM-KISAN, 
 ├── README.md                    
 └── requirements.txt  
 
-`
 
 
 ---
+
+## Demo 
+
+![image](https://github.com/user-attachments/assets/572bb488-b753-4d2d-ac49-0705d35d2eb9)
+![image](https://github.com/user-attachments/assets/f4619f71-8ae2-49a6-a3aa-137096e7f106)
+![image](https://github.com/user-attachments/assets/1c7cc827-0220-4ac7-912d-0eb62833ec44)
+![image](https://github.com/user-attachments/assets/669762d1-4b66-4184-b8c3-6c0644c6921f)
+
+
+
+
 
 ## 🔧 Setup Instructions
 
