@@ -57,14 +57,19 @@ def weather():
 
 @app.route('/news')
 def news():
-    url = f"https://newsapi.org/v2/everything?q=agriculture+india&sortBy=publishedAt&apiKey={NEWS_API_KEY}&pageSize=8"
+    url = f"https://newsapi.org/v2/everything?q=agriculture+india&sortBy=publishedAt&apiKey={NEWS_API_KEY}&pageSize=10"
     try:
         res = requests.get(url)
         res.raise_for_status()
         data = res.json()
         articles = data['articles']
+        
+        # Ensure articles contain the image URL or a default placeholder image
+        for article in articles:
+            article['image'] = article.get('urlToImage', 'default_image_url')  # Replace with a default image URL if no image is found
     except Exception as e:
-        articles = [{"title": "Failed to fetch news", "description": str(e), "url": "#"}]
+        articles = [{"title": "Failed to fetch news", "description": str(e), "url": "#", "image": "default_image_url"}]
+    
     return render_template("news.html", articles=articles)
 
 
