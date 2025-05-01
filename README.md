@@ -52,22 +52,19 @@ Displays up-to-date government schemes using verified official links (PM-KISAN, 
 │   ├── crop-recomendation.csv            
 │   
 
-├── static/                  
-│   ├── style/
-│        ├──index.css
-│        ├──chat.css
-│        ├──news.css
-│        ├──diagnous.css
-│        ├──weather.css
-│
-│   ├── Upload/           
-│       
+├── static/style/                  
+│   ├── index.css              
+│   ├── chat.css             
+│   ├── weather.css            
+│   ├── news.css
+    ├── diagonise.css  
 
 ├── templates/                  
 │   ├── index.html              
 │   ├── chat.html             
 │   ├── weather.html            
-│   ├── news.html                            
+│   ├── news.html  
+    ├── diagonise.html                            
 
 ├── app.py       
 ├── README.md                    
