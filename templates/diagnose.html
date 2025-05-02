@@ -7,42 +7,32 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style/diagnose.css') }}">
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-4">🌱 Plant Disease Diagnosis</h2>
+  <div class="container py-5">
+    <h2 class="text-center mb-4">🌾 Crop Recommendation System</h2>
 
-    <form method="POST" enctype="multipart/form-data" class="mb-4 p-4 rounded shadow bg-white">
+    <form method="POST" class="p-4 shadow rounded bg-white">
       <div class="mb-3">
-        <label class="form-label">Upload Image of Diseased Plant:</label>
-        <input type="file" name="image" class="form-control" accept="image/*" required>
+        <label for="country" class="form-label">Country</label>
+        <input type="text" class="form-control" id="country" name="country" required>
       </div>
-      <button type="submit" class="btn btn-success">Diagnose</button>
+      <div class="mb-3">
+        <label for="location" class="form-label">Location (City/Region)</label>
+        <input type="text" class="form-control" id="location" name="location" required>
+      </div>
+      <div class="mb-3">
+        <label for="season" class="form-label">Season or Month</label>
+        <input type="text" class="form-control" id="season" name="season" required>
+      </div>
+      <button type="submit" class="btn btn-success w-100">Get Recommendations</button>
     </form>
 
-    {% if diagnosis %}
-      <div class="card shadow mb-4">
-        <div class="card-header">
-          🧪 Diagnosis Result
-        </div>
-        <div class="card-body">
-
-          {% if image_filename %}
-            <div class="mb-4">
-              <h6>Uploaded Image:</h6>
-              <img src="{{ url_for('static', filename='uploads/' + image_filename) }}" class="img-thumbnail" style="max-width: 400px;">
-            </div>
-          {% endif %}
-
-          {% for line in diagnosis.split('\n') %}
-            {% if line.startswith("1.") or line.startswith("2.") or line.startswith("3.") or line.startswith("4.") or line.startswith("5.") %}
-              <h5 class="mt-3 text-primary">{{ line }}</h5>
-            {% elif line.strip() %}
-              <p>{{ line }}</p>
-            {% endif %}
-          {% endfor %}
-
-        </div>
+    {% if recommendations %}
+      <div class="mt-5 p-4 bg-white shadow rounded">
+        <h4 class="mb-3">📝 Expert Recommendations:</h4>
+        <pre style="white-space: pre-wrap;">{{ recommendations }}</pre>
       </div>
     {% endif %}
+  </div>
 
     <a href="/" class="btn btn-link mt-3">← Back to Home</a>
   </div>

@@ -2,24 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weather Finder | FarmAssist</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <title>🌾 Weather Forecast - KrishiMitra</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style/weather.css') }}">
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">FarmAssist</a>
+      <a class="navbar-brand" href="/">🌾 FarmAssist</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/">🏠 Home</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/weather">🌦️ Weather</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/">🏠 Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/weather">🌦️ Weather</a></li>
           <li class="nav-item"><a class="nav-link" href="/chat">💬 Chatbot</a></li>
           <li class="nav-item"><a class="nav-link" href="/news">📰 News</a></li>
         </ul>
@@ -27,68 +26,110 @@
     </div>
   </nav>
 
-  <!-- Weather Section -->
   <div class="container py-5">
-    <h2 class="text-center mb-4">🌦️ Indian Weather Lookup</h2>
+    <h2 class="text-center mb-4">🌦️ Weather Info by District</h2>
 
-    <form id="weatherForm" class="row g-3 justify-content-center">
-      <div class="col-md-4">
+    <form id="weatherForm" class="row g-3">
+      <div class="col-md-5">
         <input type="text" class="form-control" id="state" placeholder="Enter State" required>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-5">
         <input type="text" class="form-control" id="district" placeholder="Enter District" required>
       </div>
       <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Get Weather</button>
+        <button type="submit" class="btn btn-success w-100">Get Weather</button>
       </div>
     </form>
 
     <div id="weatherResult" class="mt-5"></div>
   </div>
 
-  <!-- Scripts -->
   <script>
-    const API_KEY = "{{ api_key }}"; // Flask will inject this
+    const API_KEY = "{{ api_key }}";
 
     document.getElementById('weatherForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const state = document.getElementById('state').value;
       const district = document.getElementById('district').value;
       const location = `${district}, ${state}, India`;
+      const resultDiv = document.getElementById('weatherResult');
+      resultDiv.innerHTML = "<div class='text-center'>⏳ Loading...</div>";
 
       try {
-        // Step 1: Get lat/lon
         const geoRes = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=${API_KEY}`);
         const geoData = await geoRes.json();
         if (!geoData.length) throw new Error("Location not found!");
 
         const { lat, lon } = geoData[0];
 
-        // Step 2: Get weather
         const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
         const weatherData = await weatherRes.json();
 
-        const html = `
-          <div class="card shadow mx-auto" style="max-width: 500px;">
+        let currentHTML = `
+          <div class="card shadow dark-card mb-4">
             <div class="card-body">
               <h5 class="card-title">${weatherData.name}, ${state}</h5>
               <p class="card-text">
-                🌡️ Temperature: ${weatherData.main.temp}°C<br>
-                💨 Wind Speed: ${weatherData.wind.speed} m/s<br>
-                🌫️ Condition: ${weatherData.weather[0].description}<br>
-                💧 Humidity: ${weatherData.main.humidity}%
+                🌡️ <strong>Temperature:</strong> ${weatherData.main.temp}°C<br>
+                📈 <strong>Max:</strong> ${weatherData.main.temp_max}°C, 📉 <strong>Min:</strong> ${weatherData.main.temp_min}°C<br>
+                💧 <strong>Humidity:</strong> ${weatherData.main.humidity}%<br>
+                ☁️ <strong>Cloud Cover:</strong> ${weatherData.clouds.all}%<br>
+                🌫️ <strong>Visibility:</strong> ${(weatherData.visibility / 1000).toFixed(1)} km<br>
+                🧭 <strong>Pressure:</strong> ${weatherData.main.pressure} hPa<br>
+                🌬️ <strong>Wind:</strong> ${weatherData.wind.speed} m/s at ${weatherData.wind.deg}°<br>
+                🌅 <strong>Sunrise:</strong> ${new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}<br>
+                🌇 <strong>Sunset:</strong> ${new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}<br>
+                🌫️ <strong>Condition:</strong> ${weatherData.weather[0].description}
               </p>
             </div>
           </div>`;
-        document.getElementById('weatherResult').innerHTML = html;
+
+        let alert = "";
+        if (weatherData.main.humidity > 85) alert += "⚠️ High humidity – Risk of fungal infection in crops.<br>";
+        if (weatherData.main.temp > 38) alert += "🔥 Heat stress – Consider irrigation and shade nets.<br>";
+        if (weatherData.wind.speed > 10) alert += "🌪️ Strong winds – Secure crops or nets.<br>";
+
+        if (alert) {
+          currentHTML += `
+            <div class="alert alert-warning shadow">
+              <h6>🧑‍🌾 Crop Advisory:</h6>${alert}
+            </div>`;
+        }
+
+        resultDiv.innerHTML = currentHTML;
+
+        const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
+        const forecastData = await forecastRes.json();
+
+        let forecastHTML = `<h5 class="mt-4 text-success">📅 5-Day Forecast (3hr Interval)</h5>`;
+        forecastHTML += `<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">`;
+
+        forecastData.list.slice(0, 6).forEach(item => {
+          const time = new Date(item.dt * 1000).toLocaleString();
+          forecastHTML += `
+            <div class="col">
+              <div class="card shadow dark-card forecast-card h-100">
+                <div class="card-body">
+                  <h6 class="card-title">${time}</h6>
+                  <p class="card-text">
+                    🌡️ Temp: ${item.main.temp}°C<br>
+                    💧 Humidity: ${item.main.humidity}%<br>
+                    ☁️ ${item.weather[0].description}<br>
+                    🌬️ Wind: ${item.wind.speed} m/s
+                  </p>
+                </div>
+              </div>
+            </div>`;
+        });
+
+        forecastHTML += `</div>`;
+        resultDiv.innerHTML += forecastHTML;
 
       } catch (err) {
-        document.getElementById('weatherResult').innerHTML = `
-          <div class="alert alert-danger text-center">❌ ${err.message}</div>`;
+        resultDiv.innerHTML = `<div class="alert alert-danger shadow">❌ ${err.message}</div>`;
       }
     });
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

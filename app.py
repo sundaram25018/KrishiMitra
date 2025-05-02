@@ -66,7 +66,7 @@ def news():
         
         # Ensure articles contain the image URL or a default placeholder image
         for article in articles:
-            article['image'] = article.get('urlToImage', 'default_image_url')  # Replace with a default image URL if no image is found
+            article['image'] = article.get('urlToImage', 'default.png')  # Replace with a default image URL if no image is found
     except Exception as e:
         articles = [{"title": "Failed to fetch news", "description": str(e), "url": "#", "image": "default_image_url"}]
     
@@ -74,7 +74,7 @@ def news():
 
 
 
-@app.route("/chat", methods=["GET", "POST"])
+@app.route("/diagnose", methods=["GET", "POST"])
 def chat():
     recommendations = None
     if request.method == "POST":
@@ -82,20 +82,20 @@ def chat():
         location = request.form["location"]
         season = request.form["season"]
         recommendations = get_crop_recommendations(country, location, season)
-    return render_template("chat.html", recommendations=recommendations)
+    return render_template("diagnose.html", recommendations=recommendations)
 
-@app.route("/diagnose", methods=["GET", "POST"])
+@app.route("/chat", methods=["GET", "POST"])
 def diagnose():
     diagnosis = None
     image_filename = None
 
     if request.method == "POST":
         if "image" not in request.files:
-            return render_template("diagnose.html", diagnosis="No file uploaded.")
+            return render_template("chat.html", diagnosis="No file uploaded.")
 
         file = request.files["image"]
         if file.filename == "":
-            return render_template("diagnose.html", diagnosis="No file selected.")
+            return render_template("chat.html", diagnosis="No file selected.")
 
         image_filename = file.filename
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], image_filename)
@@ -118,7 +118,7 @@ def diagnose():
         response = model.generate_content([prompt, image])
         diagnosis = response.text.strip()
 
-    return render_template("diagnose.html", diagnosis=diagnosis, image_filename=image_filename)
+    return render_template("chat.html", diagnosis=diagnosis, image_filename=image_filename)
 
 
 @app.route("/predict", methods=['POST'])
