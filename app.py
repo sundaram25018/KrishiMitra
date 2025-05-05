@@ -57,7 +57,7 @@ def weather():
 
 @app.route('/news')
 def news():
-    url = f"https://newsapi.org/v2/everything?q=agriculture+india&sortBy=publishedAt&apiKey={NEWS_API_KEY}&pageSize=10"
+    url = f"https://newsapi.org/v2/everything?q=agriculture+india&sortBy=publishedAt&apiKey={NEWS_API_KEY}&pageSize=12"
     try:
         res = requests.get(url)
         res.raise_for_status()
@@ -71,7 +71,6 @@ def news():
         articles = [{"title": "Failed to fetch news", "description": str(e), "url": "#", "image": "default_image_url"}]
     
     return render_template("news.html", articles=articles)
-
 
 
 @app.route("/diagnose", methods=["GET", "POST"])
