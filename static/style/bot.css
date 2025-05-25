@@ -72,3 +72,40 @@
     button.btn-success:hover {
       background-color: #218838;
     }
+    .input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+}
+
+.input-wrapper input {
+  background-color: #1e1f26;
+  color: #fff;
+  border: 1px solid #ff4d4d; /* Red border */
+  padding: 10px 40px 10px 15px;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-wrapper input::placeholder {
+  color: #888;
+}
+
+.send-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.send-icon:hover {
+  color: #28a745;
+}
