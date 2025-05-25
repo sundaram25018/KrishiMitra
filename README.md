@@ -41,34 +41,47 @@ Displays up-to-date government schemes using verified official links (PM-KISAN, 
 
 ## 📂 Project Structure
 
-.
-├── models/                  
-│   ├── model.pkl             
-│   ├── scaler.pkl            
-│   ├── label.pkl            
-
-├── Notebook/                  
-│   ├── crop.ipynb            
-│   ├── crop-recomendation.csv            
-│   
-
-├── static/style/                  
-│   ├── index.css              
-│   ├── chat.css             
-│   ├── weather.css            
-│   ├── news.css
-    ├── diagonise.css  
-
-├── templates/                  
-│   ├── index.html              
-│   ├── chat.html             
-│   ├── weather.html            
-│   ├── news.html  
-    ├── diagonise.html                            
-
-├── app.py       
-├── README.md                    
-└── requirements.txt  
+├── data/
+│   └── agriculture.pdf
+│
+├── models/
+│   ├── label.pkl
+│   ├── model.pkl
+│   └── scaler.pkl
+│
+├── Notebook/
+│   ├── Crop (1).ipynb
+│   ├── Crop_recommendation.ipynb
+│   └── Plant-disease-prediction.ipynb
+│
+├── static/
+│   ├── style/
+│   ├── uploads/
+│   └── agri_schemes.json
+│
+├── templates/
+│   ├── bot.html
+│   ├── chat.html
+│   ├── diagnose.html
+│   ├── index.html
+│   ├── news.html
+│   └── weather.html
+│
+├── vectorstore/
+│   └── db_faiss/
+│       ├── index.faiss
+│       └── index.pkl
+│
+├── .env
+├── .gitignore
+├── app.py
+├── build_llm.py
+├── create_llm_vector.py
+├── default.png
+├── README.md
+├── requirements.txt
+└── test.py
+  
 
 
 
