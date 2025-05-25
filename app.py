@@ -1,4 +1,11 @@
 from flask import Flask, request, render_template,jsonify
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.chains import RetrievalQA
+from langchain_community.vectorstores import FAISS
+from langchain_core.prompts import PromptTemplate
+from langchain_huggingface import HuggingFaceEndpoint
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 import json
 import google.generativeai as genai
 import requests
@@ -13,11 +20,20 @@ model = pickle.load(open('models/model.pkl', 'rb'))
 sc = pickle.load(open('models/scaler.pkl', 'rb'))
 lb = pickle.load(open('models/label.pkl', 'rb'))
 
+# chat bot
 
+DB_FAISS_PATH = "vectorstore/db_faiss"
+HUGGINGFACE_REPO_ID = "mistralai/Mistral-7B-Instruct-v0.3"
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+vectorstore = FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True)
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-NEWS_API_KEY = "43463497e7164948abcac068d62df017"  # Replace with your actual News API key
+NEWS_API_KEY = "43463497e7164948abcac068d62df017"
+NEWSDATA_API_KEY = "pub_86819288e6a53d7108b68ee69597c623811ab"  # Replace with your actual News API 
+  # Replace with your actual News API key
 
 
 # Flask app
@@ -71,6 +87,7 @@ def news():
         articles = [{"title": "Failed to fetch news", "description": str(e), "url": "#", "image": "default_image_url"}]
     
     return render_template("news.html", articles=articles)
+
 
 
 @app.route("/diagnose", methods=["GET", "POST"])
@@ -144,6 +161,55 @@ def predict():
 
     except Exception as e:
         return render_template('index.html', result=f"Error: {str(e)}")
+    
+
+def set_custom_prompt():
+    custom_template = """
+    Use the pieces of information provided in the context to answer user's question.
+    If you don’t know the answer, just say that you don’t know — don’t make it up.
+    Don’t provide anything outside of the given context.
+
+    Context: {context}
+    Question: {question}
+
+    Start the answer directly. No small talk.
+    """
+    return PromptTemplate(template=custom_template, input_variables=["context", "question"])
+
+def load_llm():
+    return HuggingFaceEndpoint(
+        repo_id=HUGGINGFACE_REPO_ID,
+        temperature=0.5,
+        huggingfacehub_api_token=HF_TOKEN,
+        max_new_tokens=512
+    )
+
+llm = load_llm()
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=vectorstore.as_retriever(search_kwargs={"k": 3}),
+    return_source_documents=True,
+    chain_type_kwargs={"prompt": set_custom_prompt()}
+)
+
+@app.route("/bots")
+def bots():
+    return render_template("bot.html")
+
+@app.route("/query", methods=["POST"])
+def chatbots():
+    try:
+        query = request.json.get("query")
+        if not query:
+            return jsonify({"response": "No query provided"}), 400
+
+        result = qa_chain.invoke({"query": query})["result"]
+        return jsonify({"response": result + " This is from books and articles, not from the web."})
+
+    except Exception as e:
+        return jsonify({"response": f"Error: {str(e)}"}), 500
+
 
 # Main
 if __name__ == "__main__":
