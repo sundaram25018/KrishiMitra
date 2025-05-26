@@ -28,14 +28,14 @@ Displays up-to-date government schemes using verified official links (PM-KISAN, 
 
 ## 💻 Tech Stack
 
-- **model training**: Machine learning, scikit-learn
-- **Frontend**: HTML, Bootstrap 5, JavaScript
+- **model training**: Machine learning, scikit-learn, Deep learning
+- **Frontend**: HTML, Bootstrap 5, CSS, JavaScript
 - **Backend**: Python + Flask
 - **APIs**:
   - OpenWeatherMap (weather)
-  - Feedparser (news)
+  - NewsAPI (news)
   - Static or scraped scheme data
-- **Optional AI**: Gemini/OpenAI GPT or Rule-based JSON logic
+- **Optional AI**: Gemini/OpenAI GPT, Langchain, Huggingface or Rule-based JSON logic
 
 ---
 
