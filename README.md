@@ -18,10 +18,10 @@ Shows latest agricultural news from trusted sources like NDTV and DownToEarth.
 ✅ **📢 Government Schemes**  
 Displays up-to-date government schemes using verified official links (PM-KISAN, AIF, eNAM etc.)
 
-✅ **🌱 Crop Recommendation **  
+✅ **🌱 Crop Recommendation**  
  ML-based crop prediction based on soil, climate and rainfall data and .
 
- ✅ **🌱 Disease Prediction **  
+ ✅ **🌱 Disease Prediction**  
  ML-based Disease prediction by uploading an image and suggest a discription and solutions .
 
 ---
