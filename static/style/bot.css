@@ -1,78 +1,82 @@
- body {
-      background-color: #000;
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-    .navbar {
-       background-color: #1f1f1f;
-    }
+.navbar {
+  background-color: #1f1f1f;
+}
 
-    .chat-container {
-      max-width: 700px;
-      margin: 60px auto;
-      padding: 30px;
-      background-color: #111;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(40, 167, 69, 0.4);
-    }
+.chat-container {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 30px;
+  background-color: #111;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(40, 167, 69, 0.4);
+}
 
-    #chat-box {
-      background-color: #1a1a1a;
-      border-radius: 10px;
-      padding: 20px;
-      height: 400px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-    }
+#chat-box {
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  padding: 20px;
+  height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
 
-    .chat-message {
-      margin: 10px 0;
-      padding: 12px 15px;
-      border-radius: 10px;
-      max-width: 80%;
-      word-wrap: break-word;
-    }
+.chat-message {
+  margin: 10px 0;
+  padding: 12px 15px;
+  border-radius: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
+  display: flex;
+  align-items: center;
+}
 
-    .user-message {
-      background-color: #28a745;
-      color: #fff;
-      align-self: flex-end;
-      margin-left: auto;
-    }
+.user-message {
+  background-color: #28a745;
+  color: #fff;
+  align-self: flex-end;
+  margin-left: auto;
+  text-align: right;
+}
 
-    .bot-message {
-      background-color: #2c2c2c;
-      border-left: 4px solid #28a745;
-      color: #fff;
-      align-self: flex-start;
-      margin-right: auto;
-    }
+.bot-message {
+  background-color: #2c2c2c;
+  border-left: 4px solid #28a745;
+  color: #fff;
+  align-self: flex-start;
+  margin-right: auto;
+}
 
-    .loading-message {
-      font-style: italic;
-      color: #ccc;
-    }
+.loading-message {
+  font-style: italic;
+  color: #ccc;
+}
 
-    textarea {
-      background-color: #000;
-      color: #fff;
-      border: 1px solid #28a745;
-    }
+textarea {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #28a745;
+}
 
-    textarea::placeholder {
-      color: #aaa;
-    }
+textarea::placeholder {
+  color: #aaa;
+}
 
-    button.btn-success {
-      background-color: #28a745;
-      border: none;
-    }
+button.btn-success {
+  background-color: #28a745;
+  border: none;
+}
 
-    button.btn-success:hover {
-      background-color: #218838;
-    }
-    .input-wrapper {
+button.btn-success:hover {
+  background-color: #218838;
+}
+
+.input-wrapper {
   position: relative;
   width: 100%;
   max-width: 600px;
@@ -82,7 +86,7 @@
 .input-wrapper input {
   background-color: #1e1f26;
   color: #fff;
-  border: 1px solid #347d44; /* Red border */
+  border: 1px solid #347d44;
   padding: 10px 40px 10px 15px;
   border-radius: 8px;
   width: 100%;
