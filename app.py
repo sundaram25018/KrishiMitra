@@ -1,48 +1,44 @@
 from flask import Flask, request, render_template, jsonify
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
-from langchain_huggingface import HuggingFaceEndpoint
+from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv, find_dotenv
 import json
 import google.generativeai as genai
 import requests
 import numpy as np
 import pickle
-import feedparser
 from PIL import Image
 import os
 
 # Load environment variables
 load_dotenv(find_dotenv())
 
-# Load trained model and tools
+# Load trained models and tools
 model = pickle.load(open('models/model.pkl', 'rb'))
 sc = pickle.load(open('models/scaler.pkl', 'rb'))
 lb = pickle.load(open('models/label.pkl', 'rb'))
 
 # Constants
 DB_FAISS_PATH = "vectorstore/db_faiss"
-HUGGINGFACE_REPO_ID = "mistralai/Mistral-7B-Instruct-v0.3"
-HF_TOKEN = os.getenv("HF_TOKEN")
 NEWS_API_KEY = "43463497e7164948abcac068d62df017"
-NEWSDATA_API_KEY = "pub_86819288e6a53d7108b68ee69597c623811ab"
 
-# Embedding and Vectorstore
+# Setup Embeddings & FAISS
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 vectorstore = FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True)
 
 # Google Generative AI setup
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# Flask app
+# Flask app config
 app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Crop Recommendations
+# Crop Recommendation (via Gemini)
 def get_crop_recommendations(country, location, season):
     prompt = f"""
 You are an expert agricultural advisor. Based on the following details, recommend the 5 most suitable crops to grow:
@@ -68,12 +64,10 @@ Respond in a helpful and practical tone.
 def index():
     return render_template("index.html")
 
-# weather parts
 @app.route('/weather')
 def weather():
     return render_template("weather.html", api_key="731b31a39cd041de478f62bb934aa935")
 
-# News API
 @app.route('/news')
 def news():
     url = f"https://newsapi.org/v2/everything?q=agriculture+india&sortBy=publishedAt&apiKey={NEWS_API_KEY}&pageSize=12"
@@ -82,7 +76,6 @@ def news():
         res.raise_for_status()
         data = res.json()
         articles = data['articles']
-
         for article in articles:
             article['image'] = article.get('urlToImage', 'default.png')
     except Exception as e:
@@ -94,7 +87,6 @@ def news():
         }]
     return render_template("news.html", articles=articles)
 
-# crop recommendations 
 @app.route("/diagnose", methods=["GET", "POST"])
 def chat():
     recommendations = None
@@ -109,7 +101,6 @@ def chat():
 def diagnose():
     diagnosis = None
     image_filename = None
-
     if request.method == "POST":
         if "image" not in request.files:
             return render_template("chat.html", diagnosis="No file uploaded.")
@@ -124,7 +115,6 @@ def diagnose():
 
         image = Image.open(filepath)
         model = genai.GenerativeModel("gemini-1.5-flash")
-
         prompt = """
 You are an expert agricultural advisor and plant pathologist.
 I am uploading an image of a diseased plant. Please:
@@ -135,13 +125,11 @@ I am uploading an image of a diseased plant. Please:
 5. State if lab confirmation is needed.
 Be clear and practical.
 """
-
         response = model.generate_content([prompt, image])
         diagnosis = response.text.strip()
 
     return render_template("chat.html", diagnosis=diagnosis, image_filename=image_filename)
 
-# crop Recommendatation System
 @app.route("/predict", methods=['POST'])
 def predict():
     try:
@@ -153,47 +141,36 @@ def predict():
         ph = float(request.form['Ph'])
         rainfall = float(request.form['Rainfall'])
 
-        feature_list = [N, P, K, temp, humidity, ph, rainfall]
-        single_pred = np.array(feature_list).reshape(1, -1)
-
-        scaled_features = sc.transform(single_pred)
-        prediction = model.predict(scaled_features)
+        features = np.array([N, P, K, temp, humidity, ph, rainfall]).reshape(1, -1)
+        scaled = sc.transform(features)
+        prediction = model.predict(scaled)
         crop_name = lb.inverse_transform(prediction)[0]
-
         result = f"{crop_name.capitalize()} is the best crop to be cultivated right there."
         return render_template('index.html', result=result)
-
     except Exception as e:
         return render_template('index.html', result=f"Error: {str(e)}")
 
-# LangChain QA Chain Setup
+# LangChain Prompt + QA Chain
 def set_custom_prompt():
-    custom_template = """
-You are a knowledgeable assistant. Answer the user's question using only the information provided in the context below.
+    template = """
+        Use the pieces of information provided in the context to answer user's question.
+        If you don’t know the answer, just say that you don’t know, don’t try to make up an answer. 
+        Don’t provide anything out of the given context.
 
-- Do not use prior knowledge or make assumptions.
-- If the answer cannot be found in the context, respond with: "I don’t know based on the provided information."
-- Be concise and factual.
-- Avoid any small talk or filler sentences.
+        Context: {context}
+        Question: {question}
 
-Context:
-{context}
-
-Question:
-{question}
-
-Answer:
-"""
-    return PromptTemplate(template=custom_template, input_variables=["context", "question"])
-
+        Start the answer directly. No small talk please.
+        """
+    return PromptTemplate(template=template, input_variables=["context", "question"])
 
 def load_llm():
-    return HuggingFaceEndpoint(
-        repo_id=HUGGINGFACE_REPO_ID,
-        temperature=0.5,
-        huggingfacehub_api_token=HF_TOKEN,
-        max_new_tokens=512
+    os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")  # Load from .env
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
+        temperature=0.3
     )
+    return llm
 
 llm = load_llm()
 qa_chain = RetrievalQA.from_chain_type(
@@ -217,7 +194,6 @@ def chatbots():
 
         result = qa_chain.invoke({"query": query})["result"]
         return jsonify({"response": result + " This is from books and articles, not from the web."})
-
     except Exception as e:
         return jsonify({"response": f"Error: {str(e)}"}), 500
 
