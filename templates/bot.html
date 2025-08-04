@@ -19,11 +19,12 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="/">🏠 Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">🏠 Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/weather">🌦️ Weather</a></li>
           <li class="nav-item"><a class="nav-link" href="/chat">💬 Diagnose</a></li>
           <li class="nav-item"><a class="nav-link" href="/news">📰 News</a></li>
-          <li class="nav-item"><a class="nav-link" href="/bots">🧠 Chatbot</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/bots">🧠 Chatbot</a></li>
+          <li class="nav-item"><a class="nav-link" href="/timetable">📅 Time table</a></li>
         </ul>
       </div>
     </div>
@@ -35,9 +36,12 @@
     
     <div id="chat-box" class="d-flex flex-column"></div>
 
-    <div class="input-wrapper">
-      <input type="text" id="userQuery" placeholder="Pass your prompt here" />
-      <button onclick="sendMessage()" class="send-icon">
+    <div class="input-wrapper d-flex align-items-center gap-2">
+      <input type="text" id="userQuery" placeholder="Pass your prompt here" class="flex-grow-1"/>
+      <button onclick="startVoice()" class="btn btn-secondary" title="Speak">
+        🎙️
+      </button>
+      <button onclick="sendMessage()" class="btn btn-success" title="Send">
         <i class="fas fa-arrow-right"></i>
       </button>
     </div>
@@ -76,6 +80,34 @@
         loadingMsg.remove();
         chatBox.innerHTML += `<div class='chat-message bot-message text-danger'><i class="fa-solid fa-triangle-exclamation me-2"></i>Error: ${error}</div>`;
       }
+    }
+
+    function startVoice() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-IN";  // Change to your preferred language code
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      const input = document.getElementById("userQuery");
+      input.placeholder = "Listening...";
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = transcript;
+        input.placeholder = "Pass your prompt here";
+        sendMessage();
+      };
+
+      recognition.onerror = (event) => {
+        input.placeholder = "Pass your prompt here";
+        alert("Voice input failed: " + event.error);
+      };
+
+      recognition.onend = () => {
+        input.placeholder = "Pass your prompt here";
+      };
+
+      recognition.start();
     }
   </script>
 

@@ -87,6 +87,45 @@ def news():
         }]
     return render_template("news.html", articles=articles)
 
+
+@app.route("/timetable", methods=["GET", "POST"])
+def crop_timetable():
+    output = None
+    if request.method == "POST":
+        crop = request.form.get("crop")
+        soil = request.form.get("soil")
+        region = request.form.get("region")
+        date = request.form.get("start_date")
+
+        prompt = f"""
+You are an expert crop planning assistant. Generate a structured weekly timetable for a farmer who is growing **{crop}** in **{region}** with **{soil}** soil starting from **{date}**.
+
+Provide week-wise recommendations for:
+
+1. Fertilizer application (types, quantity)
+2. Irrigation (how much, how often)
+3. Crop care (weeding, pruning, pest/disease control)
+4. Weather-related advice
+5. Harvest and post-harvest guidance
+
+Output should be formatted as:
+
+Week 1:
+- Fertilizer: ...
+- Irrigation: ...
+- Care: ...
+- Weather Tips: ...
+...
+Final Week:
+- Harvest instructions
+
+Keep it practical and detailed.
+"""
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        response = model.generate_content(prompt)
+        output = response.text.strip()
+
+    return render_template("timetable.html", output=output)
 @app.route("/diagnose", methods=["GET", "POST"])
 def chat():
     recommendations = None
